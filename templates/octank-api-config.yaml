@@ -1,0 +1,18 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: octank-api-config
+  namespace: default
+data:
+    PLAYGROUND_ENABLED: "False"
+    DEBUG: "False"
+    MEDIA_URL: {{ .Values.config.media_url | default "/media/" }}     
+    STATIC_URL: {{ .Values.config.static_url | default "/static/" }}      
+    ALLOWED_HOSTS: {{ .Values.config.allowed_hosts | quote }}
+    ALLOWED_CLIENT_HOSTS: "*" 
+    AWS_MEDIA_BUCKET_NAME: {{ .Values.config.s3_media_bucket }}
+    AWS_MEDIA_LOCATION: {{ .Values.config.s3_media_location | default "media" }}              
+    AWS_MEDIA_CUSTOM_DOMAIN: {{ .Values.config.s3_media_domain }}
+    AWS_STORAGE_BUCKET_NAME: {{ .Values.config.s3_storage_bucket }}
+    AWS_STATIC_LOCATION: {{ .Values.config.s3_static_location | default "static" }}              
+    AWS_STATIC_CUSTOM_DOMAIN: {{ .Values.config.s3_storage_domain }}    

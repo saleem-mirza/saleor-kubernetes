@@ -11,18 +11,20 @@ container:
   saleor:
     image: public.ecr.aws/v2k0k1b1/octank/api
     pullPolicy: Always
-    tag: "v5"
+    tag: "latest"
 
   saleorDashboard:
     image: public.ecr.aws/v2k0k1b1/octank/dashboard
     pullPolicy: Always
-    tag: "v3"   
+    tag: "latest"   
 
 config:
   secret_key: "291f7ed0*3208o4255$befa//44db82825246"
   allowed_hosts: ".amazonaws.com,.cloudfront.net,.zethian.com,localhost,octank-api-pod"
   static_url: {}
   media_url: {}
+  email_url: {}
+  from_email: "support@octank.zethian.com"
   s3_media_bucket: {}
   s3_media_domain: {}
   s3_media_location: "media"
@@ -73,10 +75,10 @@ resources:
     memory: 1500M
 
 autoscaling:
-  enabled: false
-  minReplicas: 1
+  enabled: true
+  minReplicas: 2
   maxReplicas: 20
-  targetCPUUtilizationPercentage: 70
+  targetCPUUtilizationPercentage: 55
 
 nodeSelector: {}
 

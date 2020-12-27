@@ -45,39 +45,11 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
-          env:
-            - name: PLAYGROUND_ENABLED
-              value: "True"
-            - name: DEBUG
-              value: "True"
-            - name: DATABASE_URL
-              value: {{ .Values.config.db_url }}
-            - name: ALLOWED_HOSTS
-              value: {{ .Values.config.allowed_hosts | quote }}
-            - name: ALLOWED_CLIENT_HOSTS
-              value: "*"
-            - name: SECRET_KEY
-              value: {{ .Values.config.secret_key | default "291f7ed0*3208o4255$befa//44db82825246" }}  
-            - name: STATIC_URL
-              value: {{ .Values.config.static_url | default "/static/" }}  
-            - name: MEDIA_URL
-              value: {{ .Values.config.media_url | default "/media/" }}  
-            - name: AWS_ACCESS_KEY_ID
-              value: {{ .Values.config.aws.key_id }}
-            - name: AWS_SECRET_ACCESS_KEY     
-              value: {{ .Values.config.aws.access_key }}
-            - name: AWS_MEDIA_BUCKET_NAME
-              value: {{ .Values.config.s3_media_bucket }}
-            - name: AWS_MEDIA_LOCATION
-              value: {{ .Values.config.s3_media_location | default "media" }}              
-            - name: AWS_MEDIA_CUSTOM_DOMAIN
-              value: {{ .Values.config.s3_media_domain }}
-            - name: AWS_STORAGE_BUCKET_NAME
-              value: {{ .Values.config.s3_storage_bucket }}
-            - name: AWS_STATIC_LOCATION
-              value: {{ .Values.config.s3_static_location | default "static" }}              
-            - name: AWS_STATIC_CUSTOM_DOMAIN
-              value: {{ .Values.config.s3_storage_domain }}             
+          envFrom:
+          - configMapRef:
+              name: octank-api-config
+          - secretRef:
+              name: octank-secrets
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
