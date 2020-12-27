@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "store.fullname" . }}-api
+  labels:
+    {{- include "store.labels" . | nindent 4 }}
+spec:
+  strategy:
+    type: {{ .Values.updateStrategy }}
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "store.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "store.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      hostname: octank-api-pod
+      containers:
+        - name: proxy
+          image: "{{ .Values.container.proxy.image }}:{{ .Values.container.proxy.tag | default .Chart.AppVersion }}"
+          ports:
+            - name: proxy
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx
+            
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.saleor.image }}:{{ .Values.container.saleor.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.saleor.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: PLAYGROUND_ENABLED
+              value: "True"
+            - name: DEBUG
+              value: "True"
+            - name: DATABASE_URL
+              value: {{ .Values.config.db_url }}
+            - name: ALLOWED_HOSTS
+              value: {{ .Values.config.allowed_hosts | quote }}
+            - name: ALLOWED_CLIENT_HOSTS
+              value: "*"
+            - name: SECRET_KEY
+              value: {{ .Values.config.secret_key | default "291f7ed0*3208o4255$befa//44db82825246" }}  
+            - name: STATIC_URL
+              value: {{ .Values.config.static_url | default "/static/" }}  
+            - name: MEDIA_URL
+              value: {{ .Values.config.media_url | default "/media/" }}  
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.config.aws.key_id }}
+            - name: AWS_SECRET_ACCESS_KEY     
+              value: {{ .Values.config.aws.access_key }}
+            - name: AWS_MEDIA_BUCKET_NAME
+              value: {{ .Values.config.s3_media_bucket }}
+            - name: AWS_MEDIA_LOCATION
+              value: {{ .Values.config.s3_media_location | default "media" }}              
+            - name: AWS_MEDIA_CUSTOM_DOMAIN
+              value: {{ .Values.config.s3_media_domain }}
+            - name: AWS_STORAGE_BUCKET_NAME
+              value: {{ .Values.config.s3_storage_bucket }}
+            - name: AWS_STATIC_LOCATION
+              value: {{ .Values.config.s3_static_location | default "static" }}              
+            - name: AWS_STATIC_CUSTOM_DOMAIN
+              value: {{ .Values.config.s3_storage_domain }}             
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: octank-config
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

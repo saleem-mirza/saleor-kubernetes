@@ -1,0 +1,85 @@
+# Default values for store.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+container:
+  proxy:
+    image: public.ecr.aws/v2k0k1b1/octank/proxy
+    pullPolicy: Always
+    tag: "latest"
+
+  saleor:
+    image: public.ecr.aws/v2k0k1b1/octank/api
+    pullPolicy: Always
+    tag: "v5"
+
+  saleorDashboard:
+    image: public.ecr.aws/v2k0k1b1/octank/dashboard
+    pullPolicy: Always
+    tag: "v3"   
+
+config:
+  secret_key: "291f7ed0*3208o4255$befa//44db82825246"
+  allowed_hosts: ".amazonaws.com,.cloudfront.net,.zethian.com,localhost,octank-api-pod"
+  static_url: {}
+  media_url: {}
+  s3_media_bucket: {}
+  s3_media_domain: {}
+  s3_media_location: "media"
+  s3_storage_bucket: {}
+  s3_storage_domain: {}
+  s3_static_location: "static"
+  aws:
+    key_id: {}
+    access_key: {}
+  db_url: "postgres://username:password@server:port/database"
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: alb 
+  tls: []
+  
+replicaCount: 1
+updateStrategy: RollingUpdate
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext: {}
+
+service:
+  saleor:
+    type: NodePort
+    nodePort: 30010
+    port: 8000
+  saleorDashboard:
+    type: NodePort
+    nodePort: 30040
+    port: 9000
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 500M
+  limits:
+    cpu: 1000m
+    memory: 1500M
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

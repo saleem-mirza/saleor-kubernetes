@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "store.fullname" . }}-api
+  labels:
+    {{- include "store.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.saleor.type }}
+  ports:
+    - port: {{ .Values.service.saleor.port }}
+      protocol: TCP
+      targetPort: 80
+      name: api
+      nodePort: {{ .Values.service.saleor.nodePort }}
+  selector:
+    {{- include "store.selectorLabels" . | nindent 4 }}

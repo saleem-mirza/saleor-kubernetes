@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "store.fullname" . }}-dashboard
+  labels:
+    name: {{ include "store.fullname" . }}-dashboard
+spec:
+  type: {{ .Values.service.saleorDashboard.type }}
+  ports:
+    - port: {{ .Values.service.saleorDashboard.port }}
+      targetPort: 80
+      protocol: TCP
+      name: dashboard
+      nodePort: {{ .Values.service.saleorDashboard.nodePort }}
+  selector:
+    name: {{ include "store.fullname" . }}-dashboard
