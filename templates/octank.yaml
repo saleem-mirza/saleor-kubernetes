@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "store.fullname" . }}-dashboard
+  name: {{ include "store.fullname" . }}-api
   labels:
-    name: {{ include "store.fullname" . }}-dashboard
+    {{- include "store.labels" . | nindent 4 }}
 spec:
   strategy:
     type: {{ .Values.updateStrategy }}
   {{- if not .Values.autoscaling.enabled }}
-  replicas: 2
+  replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      name: {{ include "store.fullname" . }}-dashboard
+      {{- include "store.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,31 +20,32 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        name: {{ include "store.fullname" . }}-dashboard
+        {{- include "store.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      hostname: octank-api-pod
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ .Values.container.saleorDashboard.image }}:{{ .Values.container.saleorDashboard.tag | default .Chart.AppVersion }}
-          imagePullPolicy: {{ .Values.container.saleorDashboard.pullPolicy }}
+          image: "{{ .Values.container.octank.image }}:{{ .Values.container.octank.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.octank.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8000
               protocol: TCP
+          envFrom:
+          - configMapRef:
+              name: octank-api-config
+          - secretRef:
+              name: octank-secrets
           resources:
-            limits:
-              cpu: "1"
-              memory: 500M
-            requests:
-              cpu: 100m
-              memory: 100M
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: octank-config
 
       {{- with .Values.nodeSelector }}
       nodeSelector:

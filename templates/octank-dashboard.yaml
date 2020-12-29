@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "store.fullname" . }}-dashboard
+  labels:
+    name: {{ include "store.fullname" . }}-dashboard
+spec:
+  strategy:
+    type: {{ .Values.updateStrategy }}
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: 2
+  {{- end }}
+  selector:
+    matchLabels:
+      name: {{ include "store.fullname" . }}-dashboard
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        name: {{ include "store.fullname" . }}-dashboard
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ .Values.container.octankDashboard.image }}:{{ .Values.container.octankDashboard.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.container.octankDashboard.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 500M
+            requests:
+              cpu: 100m
+              memory: 100M
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

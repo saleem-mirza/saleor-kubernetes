@@ -8,12 +8,12 @@ container:
     pullPolicy: Always
     tag: "latest"
 
-  saleor:
+  octank:
     image: public.ecr.aws/v2k0k1b1/octank/api
     pullPolicy: Always
     tag: "latest"
 
-  saleorDashboard:
+  octankDashboard:
     image: public.ecr.aws/v2k0k1b1/octank/dashboard
     pullPolicy: Always
     tag: "latest"   
@@ -38,9 +38,6 @@ config:
 
 ingress:
   enabled: true
-  annotations:
-    kubernetes.io/ingress.class: alb 
-  tls: []
   
 replicaCount: 1
 updateStrategy: RollingUpdate
@@ -57,11 +54,11 @@ podSecurityContext:
 securityContext: {}
 
 service:
-  saleor:
+  octank:
     type: NodePort
     nodePort: 30010
     port: 8000
-  saleorDashboard:
+  octankDashboard:
     type: NodePort
     nodePort: 30040
     port: 9000
@@ -77,8 +74,8 @@ resources:
 autoscaling:
   enabled: true
   minReplicas: 2
-  maxReplicas: 20
-  targetCPUUtilizationPercentage: 55
+  maxReplicas: 71
+  targetCPUUtilizationPercentage: 65
 
 nodeSelector: {}
 

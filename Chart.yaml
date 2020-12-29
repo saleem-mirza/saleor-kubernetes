@@ -1,6 +1,6 @@
 apiVersion: v2
 name: store
-description: Saleor Store
+description: Octank Store
 
 # A chart can be either an 'application' or a 'library' chart.
 #

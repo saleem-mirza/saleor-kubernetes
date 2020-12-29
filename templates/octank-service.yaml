@@ -5,12 +5,12 @@ metadata:
   labels:
     {{- include "store.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.saleor.type }}
+  type: {{ .Values.service.octank.type }}
   ports:
-    - port: {{ .Values.service.saleor.port }}
+    - port: {{ .Values.service.octank.port }}
       protocol: TCP
-      targetPort: 80
+      targetPort: 8000
       name: api
-      nodePort: {{ .Values.service.saleor.nodePort }}
+      nodePort: {{ .Values.service.octank.nodePort }}
   selector:
     {{- include "store.selectorLabels" . | nindent 4 }}

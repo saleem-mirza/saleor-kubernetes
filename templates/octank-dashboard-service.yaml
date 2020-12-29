@@ -5,12 +5,12 @@ metadata:
   labels:
     name: {{ include "store.fullname" . }}-dashboard
 spec:
-  type: {{ .Values.service.saleorDashboard.type }}
+  type: {{ .Values.service.octankDashboard.type }}
   ports:
-    - port: {{ .Values.service.saleorDashboard.port }}
+    - port: {{ .Values.service.octankDashboard.port }}
       targetPort: 80
       protocol: TCP
       name: dashboard
-      nodePort: {{ .Values.service.saleorDashboard.nodePort }}
+      nodePort: {{ .Values.service.octankDashboard.nodePort }}
   selector:
     name: {{ include "store.fullname" . }}-dashboard
