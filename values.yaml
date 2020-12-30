@@ -69,13 +69,14 @@ resources:
     memory: 500M
   limits:
     cpu: 1000m
-    memory: 1500M
+    memory: 1000M
 
 autoscaling:
   enabled: true
   minReplicas: 2
-  maxReplicas: 71
-  targetCPUUtilizationPercentage: 65
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
