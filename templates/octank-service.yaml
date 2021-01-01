@@ -9,7 +9,7 @@ spec:
   ports:
     - port: {{ .Values.service.octank.port }}
       protocol: TCP
-      targetPort: 8000
+      targetPort: 80
       name: api
       nodePort: {{ .Values.service.octank.nodePort }}
   selector:

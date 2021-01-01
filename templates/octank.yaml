@@ -7,9 +7,6 @@ metadata:
 spec:
   strategy:
     type: {{ .Values.updateStrategy }}
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "store.selectorLabels" . | nindent 6 }}
@@ -33,7 +30,7 @@ spec:
           imagePullPolicy: {{ .Values.container.octank.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8000
+              containerPort: 80
               protocol: TCP
           envFrom:
           - configMapRef:
@@ -42,6 +39,11 @@ spec:
               name: octank-secrets
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+
+          volumeMounts:
+          - mountPath: /etc/nginx
+            name: nginx-config
+
       volumes:
         - name: nginx-config
           configMap:

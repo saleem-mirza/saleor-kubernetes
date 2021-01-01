@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: {{ include "store.fullname" . }}-spacer
+  labels:
+    app: {{ include "store.fullname" . }}-spacer
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "store.fullname" . }}-spacer
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: {{ include "store.fullname" . }}-spacer
+    spec:
+      priorityClassName: low-priority-pc
+      containers:
+      - name: "spacer"
+        image: "nginx:alpine"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 1000m            
+          limits:
+            cpu: 1000m

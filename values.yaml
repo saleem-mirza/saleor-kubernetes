@@ -39,7 +39,6 @@ config:
 ingress:
   enabled: true
   
-replicaCount: 1
 updateStrategy: RollingUpdate
 
 nameOverride: ""
@@ -66,17 +65,16 @@ service:
 resources:
   requests:
     cpu: 500m
-    memory: 500M
   limits:
     cpu: 1000m
-    memory: 1000M
+    memory: 1500M
 
 autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 100
   targetCPUUtilizationPercentage: 70
-  targetMemoryUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 90
 
 nodeSelector: {}
 
