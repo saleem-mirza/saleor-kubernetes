@@ -16,7 +16,7 @@ container:
   octankDashboard:
     image: public.ecr.aws/v2k0k1b1/octank/dashboard
     pullPolicy: Always
-    tag: "latest"   
+    tag: "latest"
 
 config:
   secret_key: "291f7ed0*3208o4255$befa//44db82825246"
@@ -38,7 +38,7 @@ config:
 
 ingress:
   enabled: true
-  
+
 updateStrategy: RollingUpdate
 
 nameOverride: ""
@@ -64,7 +64,7 @@ service:
 
 resources:
   requests:
-    cpu: 500m
+    cpu: 200m
   limits:
     cpu: 1000m
     memory: 1500M

@@ -4,12 +4,14 @@ metadata:
   name: {{ include "store.fullname" . }}-api
   labels:
     {{- include "store.labels" . | nindent 4 }}
+    app: api-server
 spec:
   strategy:
     type: {{ .Values.updateStrategy }}
   selector:
     matchLabels:
       {{- include "store.selectorLabels" . | nindent 6 }}
+      app: api-server
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +20,20 @@ spec:
       {{- end }}
       labels:
         {{- include "store.selectorLabels" . | nindent 8 }}
+        app: api-server
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - api-server
+              topologyKey: "kubernetes.io/hostname"
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       hostname: octank-api-pod
