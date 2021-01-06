@@ -33,7 +33,7 @@ spec:
                   operator: In
                   values:
                   - api-server
-              topologyKey: "kubernetes.io/hostname"
+              topologyKey: topology.kubernetes.io/zone
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       hostname: octank-api-pod

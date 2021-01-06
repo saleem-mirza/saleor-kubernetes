@@ -4,6 +4,7 @@ metadata:
   name: {{ include "store.fullname" . }}-dashboard
   labels:
     name: {{ include "store.fullname" . }}-dashboard
+    app: store-dashboard
 spec:
   strategy:
     type: {{ .Values.updateStrategy }}
@@ -13,6 +14,7 @@ spec:
   selector:
     matchLabels:
       name: {{ include "store.fullname" . }}-dashboard
+      app: store-dashboard
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -21,7 +23,20 @@ spec:
       {{- end }}
       labels:
         name: {{ include "store.fullname" . }}-dashboard
+        app: store-dashboard
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - store-dashboard
+              topologyKey: topology.kubernetes.io/zone    
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
